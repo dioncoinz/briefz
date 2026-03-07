@@ -135,7 +135,8 @@ export default async function ProjectDetailPage({
         <div style={{ fontSize: 18, fontWeight: 900 }}>Prestart log</div>
         <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
           {(prestarts || []).map((entry) => {
-            const firstLine = entry.notes?.split("\n").find((line) => line.trim()) || "";
+            const notesText = typeof entry.notes === "string" ? entry.notes : "";
+            const firstLine = notesText.split("\n").find((line: string) => line.trim()) || "";
             const match = firstLine.match(
               /prestart[:\s-]*([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\/[0-9]{2}\/[0-9]{4})\s*-\s*(days|nights)/i
             );
@@ -204,7 +205,8 @@ export default async function ProjectDetailPage({
         <div style={{ fontSize: 18, fontWeight: 900 }}>Handover log</div>
         <div style={{ display: "grid", gap: 10, marginTop: 10 }}>
           {(handovers || []).map((entry) => {
-            const firstLine = entry.notes?.split("\n").find((line) => line.trim()) || "";
+            const notesText = typeof entry.notes === "string" ? entry.notes : "";
+            const firstLine = notesText.split("\n").find((line: string) => line.trim()) || "";
             const match = firstLine.match(
               /handover[:\s-]*([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2}\/[0-9]{2}\/[0-9]{4})\s*-\s*(days|nights)/i
             );

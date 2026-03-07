@@ -137,9 +137,9 @@ export default function ProjectHandoverPage() {
 
       setCurrentHandoverId(current.id);
 
-      const cleaned = current.notes.replace(`${CURRENT_HANDOVER_MARKER}\n`, "");
+      const cleaned = typeof current.notes === "string" ? current.notes.replace(`${CURRENT_HANDOVER_MARKER}\n`, "") : "";
       const lines = cleaned.split("\n");
-      const headerLine = lines.find((line) => line.startsWith("Handover:"));
+      const headerLine = lines.find((line: string) => line.startsWith("Handover:"));
       if (headerLine) {
         const match = headerLine.match(
           /Handover:\s*([0-9]{2}\/[0-9]{2}\/[0-9]{4}|[0-9]{4}-[0-9]{2}-[0-9]{2})\s*-\s*(Days|Nights)/i
@@ -155,7 +155,7 @@ export default function ProjectHandoverPage() {
 
       const body = cleaned
         .split("\n")
-        .filter((line) => !line.startsWith("Handover:") && !line.startsWith("[Photo "))
+        .filter((line: string) => !line.startsWith("Handover:") && !line.startsWith("[Photo "))
         .join("\n")
         .trim();
       setNotes(body);

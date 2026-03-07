@@ -46,9 +46,10 @@ export default async function PrestartLogDetailPage({
     return <main style={{ color: "crimson" }}>Prestart log entry not found.</main>;
   }
 
-  const titleLine = prestart.notes
-    ?.split("\n")
-    .find((line) => line.trim().startsWith("Prestart:"));
+  const notesText = typeof prestart.notes === "string" ? prestart.notes : "";
+  const titleLine = notesText
+    .split("\n")
+    .find((line: string) => line.trim().startsWith("Prestart:"));
   const title = titleLine ? titleLine.replace("Prestart:", "").trim() : "Prestart log";
 
   return (
@@ -87,7 +88,7 @@ export default async function PrestartLogDetailPage({
             background: "#fafafa",
           }}
         >
-          {prestart.notes}
+          {notesText}
         </pre>
       </section>
 
