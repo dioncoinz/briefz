@@ -36,18 +36,20 @@ export default async function ArchivePage() {
             key={p.id}
             href={`/archive/${p.id}`}
             style={{
-              border: "1px solid #eee",
-              borderRadius: 14,
-              padding: 14,
+              border: "1px solid #cfd7e3",
+              background: "#f9fbff",
+              borderRadius: 16,
+              padding: 16,
               textDecoration: "none",
               color: "inherit",
+              boxShadow: "0 1px 1px rgba(19,34,59,0.04)",
             }}
           >
             <div style={{ fontWeight: 900, fontSize: 16 }}>{p.name}</div>
-            <div style={{ color: "#555", marginTop: 4 }}>
+            <div style={{ color: "#53617a", marginTop: 4 }}>
               {formatDateDDMMYYYY(p.start_date)} - {formatDateDDMMYYYY(p.end_date)}
             </div>
-            <div style={{ color: "#555", marginTop: 4 }}>
+            <div style={{ color: "#53617a", marginTop: 4 }}>
               Archived: {formatDateDDMMYYYY(p.archived_at)}
             </div>
           </Link>

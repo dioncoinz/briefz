@@ -32,6 +32,7 @@ Breifz is a Next.js + Supabase app for project-based supervisor handovers and pr
 - `/projects/[projectId]/prestart`
 - `/archive`
 - `/archive/[projectId]`
+- `/admin/users`
 - `/api/projects/[projectId]/archive`
 - `/api/archive/[projectId]/export?format=json`
 
@@ -42,7 +43,10 @@ Breifz is a Next.js + Supabase app for project-based supervisor handovers and pr
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
 ```
+
+`SUPABASE_SERVICE_ROLE_KEY` is required for the admin users page (`/admin/users`) to create tenant users securely on the server.
 
 2. Run SQL in Supabase SQL editor:
 

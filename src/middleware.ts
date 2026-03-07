@@ -13,7 +13,10 @@ export async function middleware(req: NextRequest) {
 
   const isLogin = path.startsWith("/login");
   const isProtected =
-    path.startsWith("/projects") || path.startsWith("/archive") || path.startsWith("/reports");
+    path.startsWith("/projects") ||
+    path.startsWith("/archive") ||
+    path.startsWith("/reports") ||
+    path.startsWith("/admin");
 
   if (!user && isProtected) {
     const url = req.nextUrl.clone();
@@ -32,5 +35,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/projects/:path*", "/archive/:path*", "/reports/:path*"],
+  matcher: ["/login", "/projects/:path*", "/archive/:path*", "/reports/:path*", "/admin/:path*"],
 };
