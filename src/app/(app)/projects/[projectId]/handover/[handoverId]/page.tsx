@@ -46,8 +46,9 @@ export default async function HandoverLogDetailPage({
     return <main style={{ color: "crimson" }}>Handover log entry not found.</main>;
   }
 
-  const titleLine = handover.notes
-    ?.split("\n")
+  const notesText = typeof handover.notes === "string" ? handover.notes : "";
+  const titleLine = notesText
+    .split("\n")
     .find((line) => line.trim().startsWith("Handover:"));
   const title = titleLine ? titleLine.replace("Handover:", "").trim() : "Handover log";
 
@@ -94,7 +95,7 @@ export default async function HandoverLogDetailPage({
             background: "#fafafa",
           }}
         >
-          {handover.notes}
+          {notesText}
         </pre>
       </section>
 
