@@ -66,7 +66,7 @@ export default function NewProjectPage() {
   }
 
   return (
-    <main style={{ maxWidth: 520 }}>
+    <main style={{ maxWidth: 560, border: "1px solid #cfd7e3", background: "#f9fbff", borderRadius: 16, padding: 18 }}>
       <h1 style={{ fontSize: 22, fontWeight: 900 }}>New project</h1>
 
       <form onSubmit={createProject} style={{ display: "grid", gap: 10, marginTop: 14 }}>
@@ -75,7 +75,7 @@ export default function NewProjectPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          style={{ padding: 10, borderRadius: 10, border: "1px solid #ddd" }}
+          style={{ padding: 10, borderRadius: 10, border: "1px solid #ced7e3", background: "#fff" }}
         />
         <label style={{ fontWeight: 800 }}>
           Start date
@@ -84,7 +84,7 @@ export default function NewProjectPage() {
             onChange={(e) => setStartDate(e.target.value)}
             type="date"
             required
-            style={{ display: "block", width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ddd", marginTop: 6 }}
+            style={{ display: "block", width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ced7e3", background: "#fff", marginTop: 6 }}
           />
         </label>
         <label style={{ fontWeight: 800 }}>
@@ -93,7 +93,7 @@ export default function NewProjectPage() {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             type="date"
-            style={{ display: "block", width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ddd", marginTop: 6 }}
+            style={{ display: "block", width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ced7e3", background: "#fff", marginTop: 6 }}
           />
         </label>
 
@@ -104,8 +104,8 @@ export default function NewProjectPage() {
           style={{
             padding: 12,
             borderRadius: 12,
-            border: "0",
-            background: "black",
+            border: "1px solid #8f451f",
+            background: "#b8642c",
             color: "white",
             fontWeight: 900,
           }}

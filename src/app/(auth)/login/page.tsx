@@ -7,7 +7,7 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<main style={{ maxWidth: 420, margin: "70px auto", padding: 20 }}>Loading...</main>}>
+    <Suspense fallback={<main style={{ maxWidth: 440, margin: "70px auto", padding: 20 }}>Loading...</main>}>
       <LoginPageContent />
     </Suspense>
   );
@@ -44,9 +44,18 @@ function LoginPageContent() {
   }
 
   return (
-    <main style={{ maxWidth: 420, margin: "70px auto", padding: 20 }}>
+    <main
+      style={{
+        maxWidth: 440,
+        margin: "70px auto",
+        padding: 22,
+        borderRadius: 16,
+        border: "1px solid #cfd7e3",
+        background: "#f9fbff",
+      }}
+    >
       <h1 style={{ fontSize: 30, fontWeight: 900, margin: 0 }}>Breifz</h1>
-      <p style={{ color: "#555", marginTop: 6 }}>
+      <p style={{ color: "#53617a", marginTop: 6 }}>
         Prestarts + Supervisor handovers, project-based.
       </p>
 
@@ -58,7 +67,7 @@ function LoginPageContent() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10, borderRadius: 12, border: "1px solid #ddd" }}
+          style={{ padding: 10, borderRadius: 12, border: "1px solid #ced7e3", background: "#fff" }}
         />
 
         <input
@@ -68,7 +77,7 @@ function LoginPageContent() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: 10, borderRadius: 12, border: "1px solid #ddd" }}
+          style={{ padding: 10, borderRadius: 12, border: "1px solid #ced7e3", background: "#fff" }}
         />
 
         {error && <div style={{ color: "crimson", fontWeight: 800 }}>{error}</div>}
@@ -78,8 +87,8 @@ function LoginPageContent() {
           style={{
             padding: 12,
             borderRadius: 12,
-            border: 0,
-            background: "black",
+            border: "1px solid #8f451f",
+            background: "#b8642c",
             color: "white",
             fontWeight: 900,
             cursor: "pointer",
@@ -94,9 +103,9 @@ function LoginPageContent() {
           style={{
             padding: 12,
             borderRadius: 12,
-            border: "1px solid #ddd",
+            border: "1px solid #ced7e3",
             background: "white",
-            fontWeight: 900,
+            fontWeight: 800,
             cursor: "pointer",
           }}
         >

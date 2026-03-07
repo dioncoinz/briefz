@@ -38,7 +38,8 @@ export default async function ProjectsPage() {
           style={{
             padding: "10px 14px",
             borderRadius: 12,
-            background: "black",
+            background: "#b8642c",
+            border: "1px solid #8f451f",
             color: "white",
             fontWeight: 900,
             textDecoration: "none",
@@ -56,15 +57,17 @@ export default async function ProjectsPage() {
             key={p.id}
             href={`/projects/${p.id}`}
             style={{
-              border: "1px solid #eee",
-              borderRadius: 14,
-              padding: 14,
+              border: "1px solid #cfd7e3",
+              background: "#f9fbff",
+              borderRadius: 16,
+              padding: 16,
               textDecoration: "none",
               color: "inherit",
+              boxShadow: "0 1px 1px rgba(19,34,59,0.04)",
             }}
           >
             <div style={{ fontWeight: 900, fontSize: 16 }}>{p.name}</div>
-            <div style={{ color: "#555", marginTop: 4 }}>
+            <div style={{ color: "#53617a", marginTop: 4 }}>
               {formatDateDDMMYYYY(p.start_date)} - {formatDateDDMMYYYY(p.end_date)}
             </div>
           </Link>
