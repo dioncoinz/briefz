@@ -65,37 +65,17 @@ export default async function ProjectDetailPage({
 
   return (
     <main>
-      <div style={{ fontSize: 24, fontWeight: 900 }}>{project.name}</div>
-      <div style={{ color: "#555", marginTop: 6 }}>
+      <h1 className="section-title">{project.name}</h1>
+      <div className="section-subtitle">
         {formatDateDDMMYYYY(project.start_date)} - {formatDateDDMMYYYY(project.end_date)}
       </div>
 
       <div style={{ display: "grid", gap: 12, marginTop: 18, maxWidth: 520 }}>
-        <Link
-          href={`/projects/${project.id}/handover`}
-          style={{
-            border: "1px solid #eee",
-            borderRadius: 14,
-            padding: 14,
-            textDecoration: "none",
-            color: "inherit",
-            fontWeight: 900,
-          }}
-        >
+        <Link href={`/projects/${project.id}/handover`} className="action-link block-link action-soft">
           Supervisor Handover
         </Link>
 
-        <Link
-          href={`/projects/${project.id}/prestart`}
-          style={{
-            border: "1px solid #eee",
-            borderRadius: 14,
-            padding: 14,
-            textDecoration: "none",
-            color: "inherit",
-            fontWeight: 900,
-          }}
-        >
+        <Link href={`/projects/${project.id}/prestart`} className="action-link block-link">
           Prestart Meeting
         </Link>
       </div>
@@ -104,18 +84,8 @@ export default async function ProjectDetailPage({
         <section style={{ marginTop: 20, maxWidth: 760 }}>
           <Link
             href={`/projects/${project.id}/handover`}
-            style={{
-              border: "1px solid #b8eac9",
-              borderRadius: 12,
-              padding: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              textDecoration: "none",
-              color: "inherit",
-              background: "#f1fcf5",
-              fontWeight: 900,
-            }}
+            className="action-link block-link"
+            style={{ background: "var(--success-bg)", borderColor: "var(--success-border)" }}
           >
             <span
               style={{
@@ -148,24 +118,19 @@ export default async function ProjectDetailPage({
             const label = `${formatDateDDMMYYYY(dateValue)} - ${shiftValue}`;
 
             return (
-              <div
-                key={entry.id}
-                style={{
-                  border: "1px solid #eee",
-                  borderRadius: 12,
-                  padding: 10,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
+              <div key={entry.id} className="list-row">
                 <Link
                   href={`/projects/${project.id}/prestart/${entry.id}`}
-                  style={{ textDecoration: "none", color: "inherit", display: "block", flex: 1 }}
+                  className="action-link block-link"
+                  style={{
+                    flex: 1,
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    flexDirection: "column",
+                  }}
                 >
                   <div style={{ fontWeight: 900 }}>{label}</div>
-                  <div style={{ color: "#666", marginTop: 4 }}>
+                  <div className="muted" style={{ marginTop: 4 }}>
                     Saved {new Date(entry.created_at).toLocaleString()}
                   </div>
                 </Link>
@@ -177,18 +142,10 @@ export default async function ProjectDetailPage({
                   <button
                     aria-label="Delete prestart"
                     title="Delete prestart"
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 10,
-                      border: "1px solid #ddd",
-                      background: "white",
-                      fontSize: 16,
-                      lineHeight: 1,
-                      cursor: "pointer",
-                    }}
+                    className="action-button action-danger"
+                    style={{ width: 66, minHeight: 42, padding: 0, fontSize: 13, lineHeight: 1 }}
                   >
-                    🗑
+                    Delete
                   </button>
                 </form>
               </div>
@@ -196,7 +153,7 @@ export default async function ProjectDetailPage({
           })}
 
           {(prestarts || []).length === 0 && (
-            <div style={{ color: "#666" }}>No prestarts logged yet.</div>
+            <div className="muted">No prestarts logged yet.</div>
           )}
         </div>
       </section>
@@ -218,24 +175,19 @@ export default async function ProjectDetailPage({
             const label = `${formatDateDDMMYYYY(dateValue)} - ${shiftValue}`;
 
             return (
-              <div
-                key={entry.id}
-                style={{
-                  border: "1px solid #eee",
-                  borderRadius: 12,
-                  padding: 10,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
+              <div key={entry.id} className="list-row">
                 <Link
                   href={`/projects/${project.id}/handover/${entry.id}`}
-                  style={{ textDecoration: "none", color: "inherit", display: "block", flex: 1 }}
+                  className="action-link block-link"
+                  style={{
+                    flex: 1,
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    flexDirection: "column",
+                  }}
                 >
                   <div style={{ fontWeight: 900 }}>{label}</div>
-                  <div style={{ color: "#666", marginTop: 4 }}>
+                  <div className="muted" style={{ marginTop: 4 }}>
                     Saved {new Date(entry.created_at).toLocaleString()}
                   </div>
                 </Link>
@@ -247,18 +199,10 @@ export default async function ProjectDetailPage({
                   <button
                     aria-label="Delete handover"
                     title="Delete handover"
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 10,
-                      border: "1px solid #ddd",
-                      background: "white",
-                      fontSize: 16,
-                      lineHeight: 1,
-                      cursor: "pointer",
-                    }}
+                    className="action-button action-danger"
+                    style={{ width: 66, minHeight: 42, padding: 0, fontSize: 13, lineHeight: 1 }}
                   >
-                    🗑
+                    Delete
                   </button>
                 </form>
               </div>
@@ -266,7 +210,7 @@ export default async function ProjectDetailPage({
           })}
 
           {(handovers || []).length === 0 && (
-            <div style={{ color: "#666" }}>No handovers logged yet.</div>
+            <div className="muted">No handovers logged yet.</div>
           )}
         </div>
       </section>
@@ -274,25 +218,16 @@ export default async function ProjectDetailPage({
       {!project.archived_at && (
         <div style={{ marginTop: 18 }}>
           <form action={`/api/projects/${project.id}/archive`} method="post">
-            <button
-              style={{
-                padding: "10px 14px",
-                borderRadius: 12,
-                border: "1px solid #ddd",
-                background: "white",
-                fontWeight: 900,
-                cursor: "pointer",
-              }}
-            >
-              Archive project
-            </button>
+            <button className="action-button">Archive project</button>
           </form>
         </div>
       )}
 
       {project.archived_at && (
         <div style={{ marginTop: 18 }}>
-          <Link href={`/archive/${project.id}`}>View archive exports</Link>
+          <Link href={`/archive/${project.id}`} className="action-link">
+            View archive exports
+          </Link>
         </div>
       )}
     </main>

@@ -54,46 +54,30 @@ export default async function PrestartLogDetailPage({
 
   return (
     <main style={{ maxWidth: 860 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 900 }}>{title}</h1>
-      <div style={{ color: "#555", marginTop: 6 }}>{project.name}</div>
-      <div style={{ color: "#555", marginTop: 4 }}>
+      <h1 className="section-title">{title}</h1>
+      <div className="section-subtitle">{project.name}</div>
+      <div className="muted" style={{ marginTop: 4 }}>
         Saved {new Date(prestart.created_at).toLocaleString()}
       </div>
 
       <section style={{ marginTop: 16 }}>
         <div style={{ fontWeight: 900 }}>Handover summary</div>
-        <pre
-          style={{
-            marginTop: 8,
-            whiteSpace: "pre-wrap",
-            border: "1px solid #eee",
-            borderRadius: 12,
-            padding: 12,
-            background: "#fafafa",
-          }}
-        >
+        <pre className="content-pre">
           {prestart.handover_summary}
         </pre>
       </section>
 
       <section style={{ marginTop: 16 }}>
         <div style={{ fontWeight: 900 }}>Prestart notes</div>
-        <pre
-          style={{
-            marginTop: 8,
-            whiteSpace: "pre-wrap",
-            border: "1px solid #eee",
-            borderRadius: 12,
-            padding: 12,
-            background: "#fafafa",
-          }}
-        >
+        <pre className="content-pre">
           {notesText}
         </pre>
       </section>
 
       <div style={{ marginTop: 18 }}>
-        <Link href={`/projects/${project.id}`}>Back to project</Link>
+        <Link href={`/projects/${project.id}`} className="action-link">
+          Back to project
+        </Link>
       </div>
     </main>
   );

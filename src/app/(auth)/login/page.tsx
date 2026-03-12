@@ -7,7 +7,7 @@ import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<main style={{ maxWidth: 440, margin: "70px auto", padding: 20 }}>Loading...</main>}>
+    <Suspense fallback={<main className="page-shell"><div className="panel form-card">Loading...</div></main>}>
       <LoginPageContent />
     </Suspense>
   );
@@ -44,18 +44,10 @@ function LoginPageContent() {
   }
 
   return (
-    <main
-      style={{
-        maxWidth: 440,
-        margin: "70px auto",
-        padding: 22,
-        borderRadius: 16,
-        border: "1px solid #cfd7e3",
-        background: "#f9fbff",
-      }}
-    >
+    <main className="page-shell" style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>
+      <section className="panel form-card" style={{ maxWidth: 460, width: "100%" }}>
       <h1 style={{ fontSize: 30, fontWeight: 900, margin: 0 }}>Breifz</h1>
-      <p style={{ color: "#53617a", marginTop: 6 }}>
+      <p className="section-subtitle">
         Prestarts + Supervisor handovers, project-based.
       </p>
 
@@ -67,7 +59,7 @@ function LoginPageContent() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10, borderRadius: 12, border: "1px solid #ced7e3", background: "#fff" }}
+          className="field"
         />
 
         <input
@@ -77,22 +69,14 @@ function LoginPageContent() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: 10, borderRadius: 12, border: "1px solid #ced7e3", background: "#fff" }}
+          className="field"
         />
 
-        {error && <div style={{ color: "crimson", fontWeight: 800 }}>{error}</div>}
+        {error && <div className="status-error" style={{ marginTop: 0 }}>{error}</div>}
 
         <button
           disabled={loading}
-          style={{
-            padding: 12,
-            borderRadius: 12,
-            border: "1px solid #8f451f",
-            background: "#b8642c",
-            color: "white",
-            fontWeight: 900,
-            cursor: "pointer",
-          }}
+          className="action-button action-primary"
         >
           {loading ? "Working..." : mode === "signin" ? "Sign in" : "Create account"}
         </button>
@@ -100,22 +84,16 @@ function LoginPageContent() {
         <button
           type="button"
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          style={{
-            padding: 12,
-            borderRadius: 12,
-            border: "1px solid #ced7e3",
-            background: "white",
-            fontWeight: 800,
-            cursor: "pointer",
-          }}
+          className="action-button"
         >
           Switch to {mode === "signin" ? "Create account" : "Sign in"}
         </button>
       </form>
 
-      <div style={{ marginTop: 14, color: "#777", fontSize: 12 }}>
+      <div style={{ marginTop: 14, color: "var(--text-muted)", fontSize: 12 }}>
         Tip: Create your first user, then add a profile row in Supabase pointing to your tenant.
       </div>
+      </section>
     </main>
   );
 }

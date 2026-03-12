@@ -91,7 +91,8 @@ export default function ProjectPrestartPage() {
   const [handoverSummary, setHandoverSummary] = useState("");
   const [prestartDate, setPrestartDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [shift, setShift] = useState<"days" | "nights">("days");
-  const [attendees, setAttendees] = useState("");
+  const [attendees, setAttendees] = useState<string[]>([]);
+  const [attendeeInput, setAttendeeInput] = useState("");
   const [weather, setWeather] = useState("");
   const [focus, setFocus] = useState("");
   const [extraNotes, setExtraNotes] = useState("");
@@ -99,6 +100,23 @@ export default function ProjectPrestartPage() {
 
   function appendTranscript(setter: (fn: (prev: string) => string) => void, text: string) {
     setter((prev) => (prev ? `${prev}${prev.endsWith(" ") ? "" : " "}${text}` : text));
+  }
+
+  function addAttendee() {
+    const name = attendeeInput.trim();
+    if (!name) return;
+
+    setAttendees((prev) => {
+      if (prev.some((entry) => entry.toLowerCase() === name.toLowerCase())) {
+        return prev;
+      }
+      return [...prev, name];
+    });
+    setAttendeeInput("");
+  }
+
+  function removeAttendee(name: string) {
+    setAttendees((prev) => prev.filter((entry) => entry !== name));
   }
 
   const sinceIso = useMemo(() => {
@@ -224,10 +242,11 @@ export default function ProjectPrestartPage() {
     }
 
     const prestartTitle = `${prestartDate} - ${shift === "days" ? "Days" : "Nights"}`;
+    const attendeeSummary = attendees.join(", ");
 
     const notes = [
       `Prestart: ${prestartTitle}`,
-      attendees ? `Attendees: ${attendees}` : null,
+      attendeeSummary ? `Attendees: ${attendeeSummary}` : null,
       weather ? `Weather: ${weather}` : null,
       focus ? `Prestart focus: ${focus}` : null,
       meetingTranscript ? `Meeting transcript: ${meetingTranscript}` : null,
@@ -332,12 +351,48 @@ export default function ProjectPrestartPage() {
 
         <label style={{ fontWeight: 800 }}>
           Attendees
-          <input
-            value={attendees}
-            onChange={(e) => setAttendees(e.target.value)}
-            placeholder="Crew names"
-            style={{ display: "block", width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ddd", marginTop: 6 }}
-          />
+          <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "stretch" }}>
+            <input
+              value={attendeeInput}
+              onChange={(e) => setAttendeeInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addAttendee();
+                }
+              }}
+              placeholder="Enter a person"
+              className="field"
+              style={{ marginTop: 0 }}
+            />
+            <button
+              type="button"
+              onClick={addAttendee}
+              className="action-button"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              + Add attendee
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+            {attendees.map((name) => (
+              <button
+                key={name}
+                type="button"
+                onClick={() => removeAttendee(name)}
+                className="action-button"
+                style={{ minHeight: 36, padding: "8px 12px" }}
+                title={`Remove ${name}`}
+              >
+                {name} x
+              </button>
+            ))}
+            {attendees.length === 0 && (
+              <span className="muted" style={{ fontWeight: 500 }}>
+                Add each attendee with the plus button.
+              </span>
+            )}
+          </div>
         </label>
 
         <label style={{ fontWeight: 800 }}>
@@ -397,15 +452,15 @@ export default function ProjectPrestartPage() {
                 setError(null);
                 setHandoverSummary(summary);
               }}
+              className="action-button"
               style={{
-                padding: "8px 12px",
-                borderRadius: 10,
-                border: "1px solid #ddd",
-                background: "white",
-                fontWeight: 800,
-                lineHeight: 1.2,
+                marginLeft: "auto",
                 minHeight: 42,
-                cursor: "pointer",
+                padding: "8px 12px",
+                lineHeight: 1.2,
+                background: "linear-gradient(180deg, #eefbf2 0%, #daf3e3 100%)",
+                borderColor: "#a8d5b5",
+                color: "#1f5a31",
               }}
             >
               Summarize meeting

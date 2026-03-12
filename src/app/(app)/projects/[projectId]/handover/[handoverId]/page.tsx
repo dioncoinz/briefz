@@ -77,24 +77,15 @@ export default async function HandoverLogDetailPage({
 
   return (
     <main style={{ maxWidth: 860 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 900 }}>{title}</h1>
-      <div style={{ color: "#555", marginTop: 6 }}>{project.name}</div>
-      <div style={{ color: "#555", marginTop: 4 }}>
+      <h1 className="section-title">{title}</h1>
+      <div className="section-subtitle">{project.name}</div>
+      <div className="muted" style={{ marginTop: 4 }}>
         Saved {new Date(handover.created_at).toLocaleString()}
       </div>
 
       <section style={{ marginTop: 16 }}>
         <div style={{ fontWeight: 900 }}>Handover notes</div>
-        <pre
-          style={{
-            marginTop: 8,
-            whiteSpace: "pre-wrap",
-            border: "1px solid #eee",
-            borderRadius: 12,
-            padding: 12,
-            background: "#fafafa",
-          }}
-        >
+        <pre className="content-pre">
           {notesText}
         </pre>
       </section>
@@ -105,12 +96,8 @@ export default async function HandoverLogDetailPage({
           {(photos || []).map((photo) => (
             <div
               key={photo.id}
-              style={{
-                border: "1px solid #eee",
-                borderRadius: 10,
-                padding: 10,
-                background: "#fafafa",
-              }}
+              className="panel-soft"
+              style={{ padding: 10 }}
             >
               {signedMap.get(photo.id) ? (
                 <img
@@ -121,21 +108,23 @@ export default async function HandoverLogDetailPage({
                     maxHeight: 420,
                     objectFit: "cover",
                     borderRadius: 8,
-                    border: "1px solid #eee",
+                    border: "1px solid var(--border)",
                   }}
                 />
               ) : (
-                <div style={{ color: "#666" }}>Unable to load image preview.</div>
+                <div className="muted">Unable to load image preview.</div>
               )}
               <div style={{ fontWeight: 800 }}>{photo.caption || "(No caption)"}</div>
             </div>
           ))}
-          {(photos || []).length === 0 && <div style={{ color: "#666" }}>No photos recorded.</div>}
+          {(photos || []).length === 0 && <div className="muted">No photos recorded.</div>}
         </div>
       </section>
 
       <div style={{ marginTop: 18 }}>
-        <Link href={`/projects/${project.id}`}>Back to project</Link>
+        <Link href={`/projects/${project.id}`} className="action-link">
+          Back to project
+        </Link>
       </div>
     </main>
   );

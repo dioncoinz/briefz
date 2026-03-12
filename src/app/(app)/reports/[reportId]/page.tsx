@@ -36,12 +36,14 @@ export default async function ReportDetailPage({
   if (!report) {
     return (
       <main>
-        <h1 style={{ fontSize: 24, fontWeight: 900 }}>Report not found</h1>
-        <p style={{ color: "#555", marginTop: 8 }}>
+        <h1 className="section-title">Report not found</h1>
+        <p className="muted" style={{ marginTop: 8 }}>
           No report was found for id <code>{params.reportId}</code>.
         </p>
         <p style={{ marginTop: 14 }}>
-          <Link href="/projects">Back to projects</Link>
+          <Link href="/projects" className="action-link">
+            Back to projects
+          </Link>
         </p>
       </main>
     );
@@ -49,21 +51,12 @@ export default async function ReportDetailPage({
 
   return (
     <main>
-      <h1 style={{ fontSize: 24, fontWeight: 900 }}>Report {report.id}</h1>
-      <p style={{ color: "#555", marginTop: 8 }}>
+      <h1 className="section-title">Report {report.id}</h1>
+      <p className="muted" style={{ marginTop: 8 }}>
         This route is now live and loading data from <code>reports</code>.
       </p>
 
-      <pre
-        style={{
-          marginTop: 16,
-          padding: 14,
-          border: "1px solid #eee",
-          borderRadius: 12,
-          background: "#fafafa",
-          overflowX: "auto",
-        }}
-      >
+      <pre className="content-pre" style={{ marginTop: 16 }}>
         {JSON.stringify(report, null, 2)}
       </pre>
     </main>

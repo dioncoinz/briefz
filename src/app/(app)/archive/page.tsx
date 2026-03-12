@@ -26,37 +26,25 @@ export default async function ArchivePage() {
 
   return (
     <main>
-      <div style={{ fontSize: 24, fontWeight: 900 }}>Archive</div>
+      <h1 className="section-title">Archive</h1>
 
-      {error && <div style={{ color: "crimson", marginTop: 12 }}>{error.message}</div>}
+      {error && <div className="status-error">{error.message}</div>}
 
       <div style={{ display: "grid", gap: 12, marginTop: 16 }}>
         {(projects || []).map((p) => (
-          <Link
-            key={p.id}
-            href={`/archive/${p.id}`}
-            style={{
-              border: "1px solid #cfd7e3",
-              background: "#f9fbff",
-              borderRadius: 16,
-              padding: 16,
-              textDecoration: "none",
-              color: "inherit",
-              boxShadow: "0 1px 1px rgba(19,34,59,0.04)",
-            }}
-          >
-            <div style={{ fontWeight: 900, fontSize: 16 }}>{p.name}</div>
-            <div style={{ color: "#53617a", marginTop: 4 }}>
+          <Link key={p.id} href={`/archive/${p.id}`} className="card-link">
+            <div className="card-link-title">{p.name}</div>
+            <div className="muted" style={{ marginTop: 4 }}>
               {formatDateDDMMYYYY(p.start_date)} - {formatDateDDMMYYYY(p.end_date)}
             </div>
-            <div style={{ color: "#53617a", marginTop: 4 }}>
+            <div className="muted" style={{ marginTop: 4 }}>
               Archived: {formatDateDDMMYYYY(p.archived_at)}
             </div>
           </Link>
         ))}
 
         {(projects || []).length === 0 && (
-          <div style={{ marginTop: 18, color: "#555" }}>No archived projects yet.</div>
+          <div className="muted" style={{ marginTop: 18 }}>No archived projects yet.</div>
         )}
       </div>
     </main>
