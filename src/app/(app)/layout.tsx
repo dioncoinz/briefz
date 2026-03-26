@@ -1,5 +1,6 @@
 // src/app/(app)/layout.tsx
 import Link from "next/link";
+import { signOutAction } from "./actions";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -19,6 +20,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Link href="/admin/users" className="action-link action-accent">
             Admin
           </Link>
+          <form action={signOutAction}>
+            <button type="submit" className="action-button">
+              Log out
+            </button>
+          </form>
         </nav>
       </header>
 

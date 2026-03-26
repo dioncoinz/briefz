@@ -1,8 +1,7 @@
-// src/middleware.ts
 import { NextRequest } from "next/server";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase/middleware";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { supabase, res } = createSupabaseMiddlewareClient(req);
 
   // Refresh session (important for SSR)

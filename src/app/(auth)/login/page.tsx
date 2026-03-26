@@ -19,7 +19,6 @@ function LoginPageContent() {
   const sp = useSearchParams();
   const next = sp.get("next") || "/projects";
 
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,10 +29,7 @@ function LoginPageContent() {
     setLoading(true);
     setError(null);
 
-    const { error } =
-      mode === "signin"
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     setLoading(false);
 
@@ -65,7 +61,7 @@ function LoginPageContent() {
         <input
           type="password"
           placeholder="Password"
-          autoComplete={mode === "signup" ? "new-password" : "current-password"}
+          autoComplete="current-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -78,21 +74,10 @@ function LoginPageContent() {
           disabled={loading}
           className="action-button action-primary"
         >
-          {loading ? "Working..." : mode === "signin" ? "Sign in" : "Create account"}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="action-button"
-        >
-          Switch to {mode === "signin" ? "Create account" : "Sign in"}
+          {loading ? "Working..." : "Sign in"}
         </button>
       </form>
 
-      <div style={{ marginTop: 14, color: "var(--text-muted)", fontSize: 12 }}>
-        Tip: Create your first user, then add a profile row in Supabase pointing to your tenant.
-      </div>
       </section>
     </main>
   );

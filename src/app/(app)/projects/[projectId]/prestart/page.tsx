@@ -95,6 +95,7 @@ export default function ProjectPrestartPage() {
   const [attendeeInput, setAttendeeInput] = useState("");
   const [weather, setWeather] = useState("");
   const [focus, setFocus] = useState("");
+  const [workForShift, setWorkForShift] = useState("");
   const [extraNotes, setExtraNotes] = useState("");
   const [meetingTranscript, setMeetingTranscript] = useState("");
 
@@ -248,7 +249,8 @@ export default function ProjectPrestartPage() {
       `Prestart: ${prestartTitle}`,
       attendeeSummary ? `Attendees: ${attendeeSummary}` : null,
       weather ? `Weather: ${weather}` : null,
-      focus ? `Prestart focus: ${focus}` : null,
+      focus ? `Safety focus: ${focus}` : null,
+      workForShift ? `Work for the shift: ${workForShift}` : null,
       meetingTranscript ? `Meeting transcript: ${meetingTranscript}` : null,
       extraNotes ? `Extra notes: ${extraNotes}` : null,
     ]
@@ -406,12 +408,34 @@ export default function ProjectPrestartPage() {
         </label>
 
         <label style={{ fontWeight: 800 }}>
-          Prestart focus
+          Safety focus
           <input
             value={focus}
             onChange={(e) => setFocus(e.target.value)}
             placeholder="Main tasks / risks"
             style={{ display: "block", width: "100%", padding: 10, borderRadius: 10, border: "1px solid #ddd", marginTop: 6 }}
+          />
+        </label>
+
+        <label style={{ fontWeight: 800 }}>
+          Work for the shift
+          <textarea
+            rows={4}
+            value={workForShift}
+            onChange={(e) => setWorkForShift(e.target.value)}
+            style={{
+              width: "100%",
+              padding: 10,
+              borderRadius: 10,
+              border: "1px solid #ddd",
+              marginTop: 6,
+              resize: "vertical",
+            }}
+            placeholder="Planned works, priorities, and key activities for this shift..."
+          />
+          <SpeechToTextButton
+            onTranscript={(text) => appendTranscript(setWorkForShift, text)}
+            disabled={saving}
           />
         </label>
 
