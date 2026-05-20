@@ -27,6 +27,13 @@ type SavedPhotoItem = {
   signedUrl: string | null;
 };
 
+type HandoverSaveContext = {
+  handoverId?: string | null;
+  userId?: string | null;
+  tenantId?: string | null;
+  rowTenantId?: string | null;
+};
+
 function safeFileName(name: string) {
   const dot = name.lastIndexOf(".");
   const base = dot > 0 ? name.slice(0, dot) : name;
@@ -39,6 +46,18 @@ function safeFileName(name: string) {
 
   const cleanExt = ext.replace(/[^a-zA-Z0-9]/g, "");
   return cleanExt ? `${cleanBase || "file"}.${cleanExt}` : cleanBase || "file";
+}
+
+function getSupabaseErrorDetails(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return { code: null, message: error instanceof Error ? error.message : null };
+  }
+
+  const maybeError = error as { code?: unknown; message?: unknown };
+  return {
+    code: typeof maybeError.code === "string" ? maybeError.code : null,
+    message: typeof maybeError.message === "string" ? maybeError.message : null,
+  };
 }
 
 export default function ProjectHandoverPage() {
@@ -101,6 +120,35 @@ export default function ProjectHandoverPage() {
     );
 
     setSavedPhotos(signed);
+  }
+
+  function logFailedHandoverSave(
+    operation: string,
+    context: HandoverSaveContext,
+    error: unknown
+  ) {
+    const details = getSupabaseErrorDetails(error);
+
+    console.error("Handover save/update failed", {
+      operation,
+      handoverId: context.handoverId || null,
+      currentUserId: context.userId || null,
+      currentTenantId: context.tenantId || null,
+      rowTenantId: context.rowTenantId || null,
+      supabaseErrorCode: details.code,
+      supabaseErrorMessage: details.message,
+    });
+  }
+
+  async function getVisibleHandoverTenantId(handoverId: string, tenantId: string) {
+    const { data } = await supabase
+      .from("handovers")
+      .select("tenant_id")
+      .eq("id", handoverId)
+      .eq("tenant_id", tenantId)
+      .maybeSingle();
+
+    return data?.tenant_id || null;
   }
 
   function extractSection(cleaned: string, label: string, knownLabels: string[]) {
@@ -196,15 +244,45 @@ export default function ProjectHandoverPage() {
       if (project?.name && active) setProjectName(project.name);
 
       if (editHandoverId) {
-        const { data: existing } = await supabase
+        const { data: existing, error: existingError } = await supabase
           .from("handovers")
-          .select("id, notes")
+          .select("id, notes, tenant_id")
           .eq("tenant_id", profile.tenant_id)
           .eq("project_id", projectId)
           .eq("id", editHandoverId)
-          .single();
+          .maybeSingle();
 
-        if (!existing || !active) return;
+        if (existingError) {
+          logFailedHandoverSave(
+            "load_edit_handover",
+            {
+              handoverId: editHandoverId,
+              userId: user.id,
+              tenantId: profile.tenant_id,
+              rowTenantId: null,
+            },
+            existingError
+          );
+          if (active) setError(existingError.message);
+          return;
+        }
+
+        if (!existing) {
+          logFailedHandoverSave(
+            "load_edit_handover",
+            {
+              handoverId: editHandoverId,
+              userId: user.id,
+              tenantId: profile.tenant_id,
+              rowTenantId: null,
+            },
+            new Error("Handover was not visible to the current tenant.")
+          );
+          if (active) setError("You do not have permission to update this handover or it no longer exists.");
+          return;
+        }
+
+        if (!active) return;
 
         setCurrentHandoverId(existing.id);
         hydrateHandoverForm(existing.notes || "", project?.start_date, project?.end_date);
@@ -394,15 +472,33 @@ export default function ProjectHandoverPage() {
       let handoverId = currentHandoverId;
 
       if (currentHandoverId) {
-        const { error: updateError } = await supabase
+        const rowTenantId = await getVisibleHandoverTenantId(currentHandoverId, tenantId);
+        const { data: updated, error: updateError } = await supabase
           .from("handovers")
           .update({ notes: draftNotes })
           .eq("id", currentHandoverId)
           .eq("tenant_id", tenantId)
           .eq("project_id", projectId)
-          .eq("created_by", user.id);
+          .select("id, tenant_id")
+          .maybeSingle();
 
-        if (updateError) throw new Error(updateError.message);
+        if (updateError || !updated) {
+          const errorToLog =
+            updateError || new Error("Handover update returned zero rows.");
+          logFailedHandoverSave(
+            "save_current_handover",
+            {
+              handoverId: currentHandoverId,
+              userId: user.id,
+              tenantId,
+              rowTenantId: updated?.tenant_id || rowTenantId,
+            },
+            errorToLog
+          );
+          throw new Error(
+            "You do not have permission to update this handover or it no longer exists."
+          );
+        }
       } else {
         const { data: inserted, error: insertError } = await supabase
           .from("handovers")
@@ -413,9 +509,21 @@ export default function ProjectHandoverPage() {
             notes: draftNotes,
           })
           .select("id")
-          .single();
+          .maybeSingle();
 
-        if (insertError || !inserted) throw new Error(insertError?.message || "Failed to save current.");
+        if (insertError || !inserted) {
+          logFailedHandoverSave(
+            "insert_current_handover",
+            {
+              handoverId: inserted?.id || null,
+              userId: user.id,
+              tenantId,
+              rowTenantId: tenantId,
+            },
+            insertError || new Error("Handover insert returned zero rows.")
+          );
+          throw new Error(insertError?.message || "Failed to save current.");
+        }
         handoverId = inserted.id;
         setCurrentHandoverId(inserted.id);
       }
@@ -487,20 +595,35 @@ export default function ProjectHandoverPage() {
 
     const narrative = buildNarrative();
 
-    let handover: { id: string } | null = null;
+    let handover: { id: string; tenant_id?: string | null } | null = null;
     let handoverError;
 
     if (currentHandoverId) {
+      const rowTenantId = await getVisibleHandoverTenantId(currentHandoverId, tenantId);
       const result = await supabase
         .from("handovers")
         .update({ notes: narrative })
         .eq("id", currentHandoverId)
         .eq("tenant_id", tenantId)
         .eq("project_id", projectId)
-        .select("id");
-      handover = result.data?.[0] || null;
+        .select("id, tenant_id")
+        .maybeSingle();
+      handover = result.data;
       handoverError =
-        result.error || (!handover ? new Error("Could not find that handover to update.") : null);
+        result.error || (!handover ? new Error("Handover update returned zero rows.") : null);
+
+      if (handoverError || !handover) {
+        logFailedHandoverSave(
+          "finalize_or_update_handover",
+          {
+            handoverId: currentHandoverId,
+            userId: user.id,
+            tenantId,
+            rowTenantId: handover?.tenant_id || rowTenantId,
+          },
+          handoverError
+        );
+      }
     } else {
       const result = await supabase
         .from("handovers")
@@ -510,15 +633,33 @@ export default function ProjectHandoverPage() {
           created_by: user.id,
           notes: narrative,
         })
-        .select("id")
-        .single();
+        .select("id, tenant_id")
+        .maybeSingle();
       handover = result.data;
-      handoverError = result.error;
+      handoverError =
+        result.error || (!handover ? new Error("Handover insert returned zero rows.") : null);
+
+      if (handoverError || !handover) {
+        logFailedHandoverSave(
+          "insert_handover",
+          {
+            handoverId: handover?.id || null,
+            userId: user.id,
+            tenantId,
+            rowTenantId: handover?.tenant_id || tenantId,
+          },
+          handoverError
+        );
+      }
     }
 
     if (handoverError || !handover) {
       setLoading(false);
-      setError(handoverError?.message || "Failed to create handover.");
+      setError(
+        currentHandoverId
+          ? "You do not have permission to update this handover or it no longer exists."
+          : handoverError?.message || "Failed to create handover."
+      );
       return;
     }
 
