@@ -736,7 +736,7 @@ export default function ProjectHandoverPage() {
                   ) : (
                     <div style={{ color: "#666" }}>Unable to load saved photo preview.</div>
                   )}
-                  <div style={{ marginTop: 8, color: "#444", fontWeight: 700 }}>
+                  <div style={{ marginTop: 8, color: "#444", fontWeight: 400 }}>
                     {photo.caption || "(No caption)"}
                   </div>
                 </div>

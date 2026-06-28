@@ -114,7 +114,7 @@ export default async function HandoverLogDetailPage({
               ) : (
                 <div className="muted">Unable to load image preview.</div>
               )}
-              <div style={{ fontWeight: 800 }}>{photo.caption || "(No caption)"}</div>
+              <div style={{ fontWeight: 400 }}>{photo.caption || "(No caption)"}</div>
             </div>
           ))}
           {(photos || []).length === 0 && <div className="muted">No photos recorded.</div>}
