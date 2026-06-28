@@ -290,7 +290,7 @@ export default function ProjectPrestartPage() {
         <div style={{ fontWeight: 900 }}>
           Prestart: {formatDateDDMMYYYY(prestartDate)} - {shift === "days" ? "Days" : "Nights"}
         </div>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Date
           <input
             type="date"
@@ -308,7 +308,7 @@ export default function ProjectPrestartPage() {
             }}
           />
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Shift
           <select
             value={shift}
@@ -327,7 +327,7 @@ export default function ProjectPrestartPage() {
             <option value="nights">Nights</option>
           </select>
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Entering Supervisor
           <input
             type="text"
@@ -345,7 +345,7 @@ export default function ProjectPrestartPage() {
             }}
           />
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Exiting Supervisor
           <input
             type="text"
@@ -366,7 +366,7 @@ export default function ProjectPrestartPage() {
       </div>
 
       <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, marginTop: 16 }}>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Handover summary
           <textarea
             required
@@ -386,7 +386,7 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Safety
           <textarea
             rows={4}
@@ -410,7 +410,7 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Progress update
           <textarea
             rows={4}
@@ -434,7 +434,7 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Current shift
           <textarea
             rows={4}
@@ -458,7 +458,7 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Quick round the room to ensure everyone knows whats going on or any concerns
           <textarea
             rows={4}
@@ -482,7 +482,7 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Safety
           <textarea
             rows={4}
@@ -506,7 +506,7 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Meeting transcript (speech-to-text)
           <textarea
             rows={6}
@@ -561,7 +561,7 @@ export default function ProjectPrestartPage() {
           </div>
         </label>
 
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Extra notes
           <textarea
             rows={4}
@@ -584,8 +584,8 @@ export default function ProjectPrestartPage() {
           />
         </label>
 
-        {error && <div style={{ color: "crimson", fontWeight: 800 }}>{error}</div>}
-        {success && <div style={{ color: "green", fontWeight: 800 }}>{success}</div>}
+        {error && <div style={{ color: "crimson", fontWeight: 700 }}>{error}</div>}
+        {success && <div style={{ color: "green", fontWeight: 700 }}>{success}</div>}
 
         <button
           disabled={saving}
@@ -605,3 +605,4 @@ export default function ProjectPrestartPage() {
     </main>
   );
 }
+

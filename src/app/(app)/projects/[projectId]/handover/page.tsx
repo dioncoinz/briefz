@@ -720,7 +720,7 @@ export default function ProjectHandoverPage() {
         <div style={{ fontWeight: 900 }}>
           Handover: {formatDateDDMMYYYY(handoverDate)} - {shift === "days" ? "Days" : "Nights"}
         </div>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Date
           <input
             type="date"
@@ -738,7 +738,7 @@ export default function ProjectHandoverPage() {
             }}
           />
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Shift
           <select
             value={shift}
@@ -757,7 +757,7 @@ export default function ProjectHandoverPage() {
             <option value="nights">Nights</option>
           </select>
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Entering Supervisor
           <input
             type="text"
@@ -775,7 +775,7 @@ export default function ProjectHandoverPage() {
             }}
           />
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Exiting Supervisor
           <input
             type="text"
@@ -796,7 +796,7 @@ export default function ProjectHandoverPage() {
       </div>
 
       <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, marginTop: 16 }}>
-        <label style={{ fontWeight: 900 }}>
+        <label style={{ fontWeight: 700 }}>
           Safety / focus for the shift / incidents
           <textarea
             value={safetyFocus}
@@ -820,7 +820,7 @@ export default function ProjectHandoverPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 900 }}>
+        <label style={{ fontWeight: 700 }}>
           Issues / concerns / priorities
           <textarea
             value={issuesConcernsPriorities}
@@ -844,7 +844,7 @@ export default function ProjectHandoverPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 900 }}>
+        <label style={{ fontWeight: 700 }}>
           Work status
           <textarea
             value={workStatus}
@@ -868,7 +868,7 @@ export default function ProjectHandoverPage() {
           />
         </label>
 
-        <label style={{ fontWeight: 900 }}>
+        <label style={{ fontWeight: 700 }}>
           General
           <textarea
             value={general}
@@ -1004,7 +1004,7 @@ export default function ProjectHandoverPage() {
                   ) : (
                     <div style={{ color: "#666" }}>Unable to load saved photo preview.</div>
                   )}
-                  <div style={{ marginTop: 8, color: "#444", fontWeight: 700 }}>
+                  <div style={{ marginTop: 8, color: "#444", fontWeight: 400 }}>
                     {photo.caption || "(No caption)"}
                   </div>
                 </div>

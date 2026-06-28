@@ -77,7 +77,7 @@ export default function NewProjectPage() {
           required
           className="field"
         />
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           Start date
           <input
             value={startDate}
@@ -88,7 +88,7 @@ export default function NewProjectPage() {
             style={{ display: "block", marginTop: 6 }}
           />
         </label>
-        <label style={{ fontWeight: 800 }}>
+        <label style={{ fontWeight: 700 }}>
           End date (optional)
           <input
             value={endDate}
