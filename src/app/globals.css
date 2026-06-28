@@ -4,7 +4,7 @@
   --background: #edf2f7;
   --foreground: #142033;
   --app-font-sans:
-    "Segoe UI", "Aptos", "Helvetica Neue", Arial, sans-serif;
+    "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --app-font-mono:
     "Cascadia Code", "Aptos Mono", "SFMono-Regular", Consolas, monospace;
   --surface: #ffffff;
@@ -57,6 +57,20 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400 !important;
+  line-height: 1.45;
+}
+
+label:has(input),
+label:has(select),
+label:has(textarea) {
+  font-weight: 700 !important;
 }
 
 main {
@@ -288,6 +302,8 @@ main {
 
 .content-pre {
   margin-top: 8px;
+  font-family: var(--app-font-sans);
+  font-weight: 400;
   white-space: pre-wrap;
   border: 1px solid var(--border);
   border-radius: 14px;
