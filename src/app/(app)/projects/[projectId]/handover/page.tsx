@@ -385,11 +385,10 @@ export default function ProjectHandoverPage() {
   async function uploadPhotosForHandover(args: {
     handoverId: string;
     tenantId: string;
-    userId: string;
     projectId: string;
     photosToUpload: PhotoItem[];
   }) {
-    const { handoverId, tenantId, userId, projectId, photosToUpload } = args;
+    const { handoverId, tenantId, projectId, photosToUpload } = args;
 
     for (const photo of photosToUpload) {
       const sanitized = safeFileName(photo.file.name);
@@ -404,7 +403,6 @@ export default function ProjectHandoverPage() {
         handover_id: handoverId,
         project_id: projectId,
         tenant_id: tenantId,
-        created_by: userId,
         storage_path: path,
         caption: photo.caption.trim(),
       });
@@ -413,7 +411,6 @@ export default function ProjectHandoverPage() {
         const retry = await supabase.from("handover_photos").insert({
           handover_id: handoverId,
           tenant_id: tenantId,
-          created_by: userId,
           storage_path: path,
           caption: photo.caption.trim(),
         });
@@ -532,7 +529,6 @@ export default function ProjectHandoverPage() {
         await uploadPhotosForHandover({
           handoverId,
           tenantId,
-          userId: user.id,
           projectId,
           photosToUpload: photos,
         });
@@ -668,7 +664,6 @@ export default function ProjectHandoverPage() {
         await uploadPhotosForHandover({
           handoverId: handover.id,
           tenantId,
-          userId: user.id,
           projectId,
           photosToUpload: photos,
         });
