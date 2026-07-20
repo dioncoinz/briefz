@@ -141,14 +141,14 @@ export default function ProjectHandoverPage() {
   }
 
   async function getVisibleHandoverTenantId(handoverId: string, tenantId: string) {
-    const { data } = await supabase
+    const { data: rows } = await supabase
       .from("handovers")
       .select("tenant_id")
       .eq("id", handoverId)
       .eq("tenant_id", tenantId)
-      .maybeSingle();
+      .limit(1);
 
-    return data?.tenant_id || null;
+    return rows?.[0]?.tenant_id || null;
   }
 
   function extractSection(cleaned: string, label: string, knownLabels: string[]) {
@@ -226,31 +226,37 @@ export default function ProjectHandoverPage() {
       } = await supabase.auth.getUser();
       if (!user || !active) return;
 
-      const { data: profile } = await supabase
+      const { data: profileRows } = await supabase
         .from("profiles")
         .select("tenant_id")
         .eq("id", user.id)
-        .maybeSingle();
+        .limit(1);
+
+      const profile = profileRows?.[0];
 
       if (!profile?.tenant_id || !active) return;
 
-      const { data: project } = await supabase
+      const { data: projectRows } = await supabase
         .from("projects")
         .select("name, start_date, end_date")
         .eq("tenant_id", profile.tenant_id)
         .eq("id", projectId)
-        .maybeSingle();
+        .limit(1);
+
+      const project = projectRows?.[0];
 
       if (project?.name && active) setProjectName(project.name);
 
       if (editHandoverId) {
-        const { data: existing, error: existingError } = await supabase
+        const { data: existingRows, error: existingError } = await supabase
           .from("handovers")
           .select("id, notes, tenant_id")
           .eq("tenant_id", profile.tenant_id)
           .eq("project_id", projectId)
           .eq("id", editHandoverId)
-          .maybeSingle();
+          .limit(1);
+
+        const existing = existingRows?.[0] || null;
 
         if (existingError) {
           logFailedHandoverSave(
@@ -433,11 +439,13 @@ export default function ProjectHandoverPage() {
       throw new Error(authError?.message || "Not logged in.");
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profileRows, error: profileError } = await supabase
       .from("profiles")
       .select("tenant_id")
       .eq("id", user.id)
-      .single();
+      .limit(1);
+
+    const profile = profileRows?.[0];
 
     if (profileError || !profile?.tenant_id) {
       throw new Error(profileError?.message || "Profile missing tenant.");
@@ -470,14 +478,15 @@ export default function ProjectHandoverPage() {
 
       if (currentHandoverId) {
         const rowTenantId = await getVisibleHandoverTenantId(currentHandoverId, tenantId);
-        const { data: updated, error: updateError } = await supabase
+        const { data: updatedRows, error: updateError } = await supabase
           .from("handovers")
           .update({ notes: draftNotes })
           .eq("id", currentHandoverId)
           .eq("tenant_id", tenantId)
           .eq("project_id", projectId)
-          .select("id, tenant_id")
-          .maybeSingle();
+          .select("id, tenant_id");
+
+        const updated = updatedRows?.[0] || null;
 
         if (updateError || !updated) {
           const errorToLog =
@@ -497,7 +506,7 @@ export default function ProjectHandoverPage() {
           );
         }
       } else {
-        const { data: inserted, error: insertError } = await supabase
+        const { data: insertedRows, error: insertError } = await supabase
           .from("handovers")
           .insert({
             tenant_id: tenantId,
@@ -505,8 +514,9 @@ export default function ProjectHandoverPage() {
             created_by: user.id,
             notes: draftNotes,
           })
-          .select("id")
-          .maybeSingle();
+          .select("id");
+
+        const inserted = insertedRows?.[0] || null;
 
         if (insertError || !inserted) {
           logFailedHandoverSave(
@@ -577,6 +587,12 @@ export default function ProjectHandoverPage() {
       return;
     }
 
+    if (editHandoverId && !currentHandoverId) {
+      setLoading(false);
+      setError("This handover could not be loaded. Refresh the page and try again.");
+      return;
+    }
+
     if (
       !safetyFocus.trim() &&
       !issuesConcernsPriorities.trim() &&
@@ -602,9 +618,8 @@ export default function ProjectHandoverPage() {
         .eq("id", currentHandoverId)
         .eq("tenant_id", tenantId)
         .eq("project_id", projectId)
-        .select("id, tenant_id")
-        .maybeSingle();
-      handover = result.data;
+        .select("id, tenant_id");
+      handover = result.data?.[0] || null;
       handoverError =
         result.error || (!handover ? new Error("Handover update returned zero rows.") : null);
 
@@ -629,9 +644,8 @@ export default function ProjectHandoverPage() {
           created_by: user.id,
           notes: narrative,
         })
-        .select("id, tenant_id")
-        .maybeSingle();
-      handover = result.data;
+        .select("id, tenant_id");
+      handover = result.data?.[0] || null;
       handoverError =
         result.error || (!handover ? new Error("Handover insert returned zero rows.") : null);
 
