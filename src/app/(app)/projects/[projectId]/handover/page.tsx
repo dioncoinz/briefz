@@ -147,31 +147,37 @@ export default function ProjectHandoverPage() {
       } = await supabase.auth.getUser();
       if (!user || !active) return;
 
-      const { data: profile } = await supabase
+      const { data: profileRows } = await supabase
         .from("profiles")
         .select("tenant_id")
         .eq("id", user.id)
-        .maybeSingle();
+        .limit(1);
+
+      const profile = profileRows?.[0];
 
       if (!profile?.tenant_id || !active) return;
 
-      const { data: project } = await supabase
+      const { data: projectRows } = await supabase
         .from("projects")
         .select("name")
         .eq("tenant_id", profile.tenant_id)
         .eq("id", projectId)
-        .maybeSingle();
+        .limit(1);
+
+      const project = projectRows?.[0];
 
       if (project?.name && active) setProjectName(project.name);
 
       if (editHandoverId) {
-        const { data: existing } = await supabase
+        const { data: existingRows } = await supabase
           .from("handovers")
           .select("id, notes")
           .eq("tenant_id", profile.tenant_id)
           .eq("project_id", projectId)
           .eq("id", editHandoverId)
-          .single();
+          .limit(1);
+
+        const existing = existingRows?.[0] || null;
 
         if (!existing || !active) return;
 
@@ -315,11 +321,13 @@ export default function ProjectHandoverPage() {
       throw new Error(authError?.message || "Not logged in.");
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profileRows, error: profileError } = await supabase
       .from("profiles")
       .select("tenant_id")
       .eq("id", user.id)
-      .single();
+      .limit(1);
+
+    const profile = profileRows?.[0];
 
     if (profileError || !profile?.tenant_id) {
       throw new Error(profileError?.message || "Profile missing tenant.");
@@ -361,7 +369,7 @@ export default function ProjectHandoverPage() {
 
         if (updateError) throw new Error(updateError.message);
       } else {
-        const { data: inserted, error: insertError } = await supabase
+        const { data: insertedRows, error: insertError } = await supabase
           .from("handovers")
           .insert({
             tenant_id: tenantId,
@@ -369,8 +377,9 @@ export default function ProjectHandoverPage() {
             created_by: user.id,
             notes: draftNotes,
           })
-          .select("id")
-          .single();
+          .select("id");
+
+        const inserted = insertedRows?.[0] || null;
 
         if (insertError || !inserted) throw new Error(insertError?.message || "Failed to save current.");
         handoverId = inserted.id;
@@ -429,6 +438,12 @@ export default function ProjectHandoverPage() {
       return;
     }
 
+    if (editHandoverId && !currentHandoverId) {
+      setLoading(false);
+      setError("This handover could not be loaded. Refresh the page and try again.");
+      return;
+    }
+
     if (!notes.trim() && photos.length === 0) {
       setLoading(false);
       setError("Add notes or photos before saving.");
@@ -448,9 +463,8 @@ export default function ProjectHandoverPage() {
         .eq("tenant_id", tenantId)
         .eq("project_id", projectId)
         .eq("created_by", user.id)
-        .select("id")
-        .single();
-      handover = result.data;
+        .select("id");
+      handover = result.data?.[0] || null;
       handoverError = result.error;
     } else {
       const result = await supabase
@@ -461,9 +475,8 @@ export default function ProjectHandoverPage() {
           created_by: user.id,
           notes: narrative,
         })
-        .select("id")
-        .single();
-      handover = result.data;
+        .select("id");
+      handover = result.data?.[0] || null;
       handoverError = result.error;
     }
 
