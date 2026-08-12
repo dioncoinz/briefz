@@ -2,6 +2,63 @@ import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { formatDateTimeAU, formatLogEntryDateDDMMYYYY } from "@/lib/date";
 
+const HANDOVER_SECTION_LABELS = [
+  "Handover",
+  "Entering Supervisor",
+  "Exiting Supervisor",
+  "Safety / focus for the shift / incidents",
+  "Issues / concerns / priorities",
+  "Work status",
+  "General",
+  "Delays",
+  "Follow-up required",
+];
+
+type HandoverSection = {
+  label: string | null;
+  value: string;
+};
+
+function formatHandoverNotes(notes: string): HandoverSection[] {
+  const sections: HandoverSection[] = [];
+  let current: HandoverSection = { label: null, value: "" };
+
+  const saveCurrent = () => {
+    const value = current.value.trim();
+    if (current.label || value) sections.push({ ...current, value });
+  };
+
+  notes
+    .replace(/^\[\[CURRENT_HANDOVER\]\]\r?\n?/, "")
+    .split(/\r?\n/)
+    .forEach((line) => {
+      const sectionLabel = HANDOVER_SECTION_LABELS.find((label) =>
+        line.toLowerCase().startsWith(`${label.toLowerCase()}:`)
+      );
+      const photoMatch = line.match(/^(\[Photo \d+\])\s*(.*)$/i);
+
+      if (sectionLabel) {
+        saveCurrent();
+        current = {
+          label: sectionLabel,
+          value: line.slice(sectionLabel.length + 1).trimStart(),
+        };
+        return;
+      }
+
+      if (photoMatch) {
+        saveCurrent();
+        current = { label: photoMatch[1], value: photoMatch[2] };
+        return;
+      }
+
+      current.value += `${current.value ? "\n" : ""}${line}`;
+    });
+
+  saveCurrent();
+  return sections;
+}
+
 export default async function HandoverLogDetailPage({
   params,
 }: {
@@ -48,6 +105,7 @@ export default async function HandoverLogDetailPage({
   }
 
   const notesText = typeof handover.notes === "string" ? handover.notes : "";
+  const noteSections = formatHandoverNotes(notesText);
   const titleLine = notesText
     .split("\n")
     .find((line: string) => line.trim().startsWith("Handover:"));
@@ -93,9 +151,21 @@ export default async function HandoverLogDetailPage({
 
       <section style={{ marginTop: 16 }}>
         <div style={{ fontWeight: 900 }}>Handover notes</div>
-        <pre className="content-pre">
-          {notesText}
-        </pre>
+        <div className="content-pre" style={{ display: "grid", gap: 18 }}>
+          {noteSections.map((section, index) => (
+            <div key={`${section.label || "note"}-${index}`}>
+              {section.label && (
+                <div style={{ fontWeight: 900 }}>{section.label}:</div>
+              )}
+              {section.value && (
+                <div style={{ marginTop: section.label ? 4 : 0, whiteSpace: "pre-wrap" }}>
+                  {section.value}
+                </div>
+              )}
+            </div>
+          ))}
+          {noteSections.length === 0 && <div className="muted">No notes recorded.</div>}
+        </div>
       </section>
 
       <section style={{ marginTop: 16 }}>
