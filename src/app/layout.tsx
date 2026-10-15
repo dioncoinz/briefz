@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en-AU">
       <body className="antialiased">
         {children}
         <footer className="site-footer">Briefz - Built by Valeron</footer>

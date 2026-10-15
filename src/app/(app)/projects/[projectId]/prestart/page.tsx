@@ -1,5 +1,6 @@
 "use client";
 
+import DateInput from "@/components/DateInput";
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
@@ -10,7 +11,7 @@ import {
   handleBulletTextareaChange,
   handleBulletTextareaKeyDown,
 } from "@/lib/bullets";
-import { formatDateDDMMYYYY } from "@/lib/date";
+import { getTodayDDMMYYYY, parseDateDDMMYYYY, formatDateDDMMYYYY, formatLogDatesInText } from "@/lib/date";
 
 type HandoverItem = {
   id: string;
@@ -94,7 +95,7 @@ export default function ProjectPrestartPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   const [handoverSummary, setHandoverSummary] = useState("");
-  const [prestartDate, setPrestartDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [prestartDate, setPrestartDate] = useState(() => getTodayDDMMYYYY());
   const [shift, setShift] = useState<"days" | "nights">("days");
   const [enteringSupervisor, setEnteringSupervisor] = useState("");
   const [exitingSupervisor, setExitingSupervisor] = useState("");
@@ -183,7 +184,7 @@ export default function ProjectPrestartPage() {
       return;
     }
 
-    setHandoverSummary(summarizeOrFallback(rows));
+    setHandoverSummary(formatLogDatesInText(summarizeOrFallback(rows)));
   }
 
   useEffect(() => {
@@ -196,6 +197,10 @@ export default function ProjectPrestartPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!parseDateDDMMYYYY(prestartDate)) {
+      setError("Enter a valid date in dd/mm/yyyy format.");
+      return;
+    }
     if (!projectId) {
       setError("Missing project id from route.");
       return;
@@ -291,12 +296,12 @@ export default function ProjectPrestartPage() {
           Prestart: {formatDateDDMMYYYY(prestartDate)} - {shift === "days" ? "Days" : "Nights"}
         </div>
         <label style={{ fontWeight: 700 }}>
-          Date
-          <input
-            type="date"
+          Date (dd/mm/yyyy)
+          <DateInput
+            form="prestart-form"
             required
             value={prestartDate}
-            onChange={(e) => setPrestartDate(e.target.value)}
+            onChange={setPrestartDate}
             style={{
               display: "block",
               width: "100%",
@@ -365,7 +370,7 @@ export default function ProjectPrestartPage() {
         </label>
       </div>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, marginTop: 16 }}>
+      <form id="prestart-form" onSubmit={onSubmit} style={{ display: "grid", gap: 12, marginTop: 16 }}>
         <label style={{ fontWeight: 700 }}>
           Handover summary
           <textarea

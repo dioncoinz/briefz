@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { formatDateTimeAU, formatLogEntryDateDDMMYYYY } from "@/lib/date";
+import { formatLogDatesInText, formatDateTimeAU, formatLogEntryDateDDMMYYYY } from "@/lib/date";
 
 export default async function PrestartLogDetailPage({
   params,
@@ -47,7 +47,11 @@ export default async function PrestartLogDetailPage({
     return <main style={{ color: "crimson" }}>Prestart log entry not found.</main>;
   }
 
-  const notesText = typeof prestart.notes === "string" ? prestart.notes : "";
+  const notesText = formatLogDatesInText(
+    typeof prestart.notes === "string" ? prestart.notes : "",
+    project.start_date,
+    project.end_date
+  );
   const titleLine = notesText
     .split("\n")
     .find((line: string) => line.trim().startsWith("Prestart:"));
@@ -71,7 +75,7 @@ export default async function PrestartLogDetailPage({
       <section style={{ marginTop: 16 }}>
         <div style={{ fontWeight: 900 }}>Handover summary</div>
         <pre className="content-pre">
-          {prestart.handover_summary}
+          {formatLogDatesInText(prestart.handover_summary || "", project.start_date, project.end_date)}
         </pre>
       </section>
 

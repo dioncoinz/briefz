@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { formatDateTimeAU, formatLogEntryDateDDMMYYYY } from "@/lib/date";
+import { formatLogDatesInText, formatDateTimeAU, formatLogEntryDateDDMMYYYY } from "@/lib/date";
 
 const HANDOVER_SECTION_LABELS = [
   "Handover",
@@ -104,7 +104,11 @@ export default async function HandoverLogDetailPage({
     return <main style={{ color: "crimson" }}>Handover log entry not found.</main>;
   }
 
-  const notesText = typeof handover.notes === "string" ? handover.notes : "";
+  const notesText = formatLogDatesInText(
+    typeof handover.notes === "string" ? handover.notes : "",
+    project.start_date,
+    project.end_date
+  );
   const noteSections = formatHandoverNotes(notesText);
   const titleLine = notesText
     .split("\n")

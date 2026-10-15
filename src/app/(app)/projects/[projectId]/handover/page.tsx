@@ -1,10 +1,11 @@
 "use client";
 
+import DateInput from "@/components/DateInput";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 import SpeechToTextButton from "@/components/SpeechToTextButton";
-import { formatDateDDMMYYYY, formatLogEntryDateDDMMYYYY } from "@/lib/date";
+import { getTodayDDMMYYYY, parseDateDDMMYYYY, formatDateDDMMYYYY, formatLogEntryDateDDMMYYYY } from "@/lib/date";
 
 const CURRENT_HANDOVER_MARKER = "[[CURRENT_HANDOVER]]";
 
@@ -79,7 +80,7 @@ export default function ProjectHandoverPage() {
   const [general, setGeneral] = useState("");
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [savedPhotos, setSavedPhotos] = useState<SavedPhotoItem[]>([]);
-  const [handoverDate, setHandoverDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [handoverDate, setHandoverDate] = useState(() => getTodayDDMMYYYY());
   const [shift, setShift] = useState<"days" | "nights">("days");
   const [currentHandoverId, setCurrentHandoverId] = useState<string | null>(null);
   const [currentLoading, setCurrentLoading] = useState(false);
@@ -193,10 +194,7 @@ export default function ProjectHandoverPage() {
       );
       if (match) {
         const formattedDate = formatLogEntryDateDDMMYYYY(match[1], projectStartDate, projectEndDate);
-        const [dd, mm, yyyy] = formattedDate.includes("/")
-          ? formattedDate.split("/")
-          : [match[1].slice(8, 10), match[1].slice(5, 7), match[1].slice(0, 4)];
-        setHandoverDate(`${yyyy}-${mm}-${dd}`);
+        setHandoverDate(formattedDate === "TBC" ? "" : formattedDate);
         setShift(match[2].toLowerCase() === "nights" ? "nights" : "days");
       }
     }
@@ -457,6 +455,10 @@ export default function ProjectHandoverPage() {
   }
 
   async function onSaveCurrent() {
+    if (!parseDateDDMMYYYY(handoverDate)) {
+      setError("Enter a valid date in dd/mm/yyyy format.");
+      return;
+    }
     if (!projectId) return;
     if (editHandoverId) return;
 
@@ -561,6 +563,10 @@ export default function ProjectHandoverPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!parseDateDDMMYYYY(handoverDate)) {
+      setError("Enter a valid date in dd/mm/yyyy format.");
+      return;
+    }
     if (!projectId) {
       setError("Missing project id from route.");
       return;
@@ -732,12 +738,12 @@ export default function ProjectHandoverPage() {
           Handover: {formatDateDDMMYYYY(handoverDate)} - {shift === "days" ? "Days" : "Nights"}
         </div>
         <label style={{ fontWeight: 700 }}>
-          Date
-          <input
-            type="date"
+          Date (dd/mm/yyyy)
+          <DateInput
+            form="handover-form"
             required
             value={handoverDate}
-            onChange={(e) => setHandoverDate(e.target.value)}
+            onChange={setHandoverDate}
             style={{
               display: "block",
               width: "100%",
@@ -806,7 +812,7 @@ export default function ProjectHandoverPage() {
         </label>
       </div>
 
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12, marginTop: 16 }}>
+      <form id="handover-form" onSubmit={onSubmit} style={{ display: "grid", gap: 12, marginTop: 16 }}>
         <label style={{ fontWeight: 700 }}>
           Safety / focus for the shift / incidents
           <textarea

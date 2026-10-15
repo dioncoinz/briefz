@@ -1,5 +1,7 @@
 "use client";
 
+import DateInput from "@/components/DateInput";
+import { parseDateDDMMYYYY } from "@/lib/date";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
@@ -16,6 +18,12 @@ export default function NewProjectPage() {
 
   async function createProject(e: React.FormEvent) {
     e.preventDefault();
+    const startDateISO = parseDateDDMMYYYY(startDate);
+    const endDateISO = endDate ? parseDateDDMMYYYY(endDate) : null;
+    if (!startDateISO || (endDate && !endDateISO)) {
+      setError("Enter valid dates in dd/mm/yyyy format.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -50,8 +58,8 @@ export default function NewProjectPage() {
       .insert({
         tenant_id: profile.tenant_id,
         name,
-        start_date: startDate,
-        end_date: endDate || null,
+        start_date: startDateISO,
+        end_date: endDateISO,
         created_by: user.id,
       })
       .select("id")
@@ -78,22 +86,20 @@ export default function NewProjectPage() {
           className="field"
         />
         <label style={{ fontWeight: 700 }}>
-          Start date
-          <input
+          Start date (dd/mm/yyyy)
+          <DateInput
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            type="date"
+            onChange={setStartDate}
             required
             className="field"
             style={{ display: "block", marginTop: 6 }}
           />
         </label>
         <label style={{ fontWeight: 700 }}>
-          End date (optional)
-          <input
+          End date (dd/mm/yyyy, optional)
+          <DateInput
             value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            type="date"
+            onChange={setEndDate}
             className="field"
             style={{ display: "block", marginTop: 6 }}
           />

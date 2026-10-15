@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatDateDDMMYYYY, formatDateTimeAU, formatLogDatesInText } from "@/lib/date";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export default async function ReportDetailPage({
@@ -57,7 +58,12 @@ export default async function ReportDetailPage({
       </p>
 
       <pre className="content-pre" style={{ marginTop: 16 }}>
-        {JSON.stringify(report, null, 2)}
+        {JSON.stringify(report, (key, value) => {
+          if (typeof value !== "string") return value;
+          if (key.endsWith("_at")) return formatDateTimeAU(value);
+          if (key.endsWith("_date")) return formatDateDDMMYYYY(value);
+          return formatLogDatesInText(value);
+        }, 2)}
       </pre>
     </main>
   );
