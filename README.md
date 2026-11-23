@@ -20,6 +20,7 @@ Briefz is a Next.js + Supabase app for project-based supervisor handovers and pr
 - Archive:
   - archived list
   - per-project archive detail at `/archive/[projectId]`
+  - unarchive a project from its archive detail page, preserving handovers and prestarts
   - JSON export endpoint for archived projects
 
 ## Route map
@@ -34,6 +35,7 @@ Briefz is a Next.js + Supabase app for project-based supervisor handovers and pr
 - `/archive/[projectId]`
 - `/admin/users`
 - `/api/projects/[projectId]/archive`
+- `/api/projects/[projectId]/unarchive`
 - `/api/archive/[projectId]/export?format=json`
 
 ## Supabase setup

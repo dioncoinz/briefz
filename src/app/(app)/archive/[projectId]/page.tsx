@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { formatDateDDMMYYYY } from "@/lib/date";
 
@@ -35,6 +36,10 @@ export default async function ArchiveProjectPage({
     return <main style={{ color: "crimson" }}>{projectError?.message || "Project not found."}</main>;
   }
 
+  if (!project.archived_at) {
+    redirect(`/projects/${project.id}`);
+  }
+
   const { count: handoverCount } = await supabase
     .from("handovers")
     .select("id", { count: "exact", head: true })
@@ -56,6 +61,17 @@ export default async function ArchiveProjectPage({
       </div>
       <div className="muted" style={{ marginTop: 4 }}>
         Archived: {formatDateDDMMYYYY(project.archived_at)}
+      </div>
+
+      <div style={{ marginTop: 18 }}>
+        <form action={`/api/projects/${project.id}/unarchive`} method="post">
+          <button type="submit" className="action-button action-primary">
+            Unarchive project
+          </button>
+        </form>
+        <div className="muted" style={{ marginTop: 8 }}>
+          Return this project to Projects with all its handovers and prestarts.
+        </div>
       </div>
 
       <div className="panel-soft" style={{ marginTop: 18, padding: 14 }}>
